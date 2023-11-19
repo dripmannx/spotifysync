@@ -6,10 +6,19 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { getAuth } from "@clerk/nextjs/server";
+import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+
+import { IncomingMessage } from "http";
+import { json } from "stream/consumers";
 import superjson from "superjson";
 import { ZodError } from "zod";
+
+import { auth } from "@clerk/nextjs";
+import { env } from "process";
+import { SpotifyWebApi } from "spotify-web-api-ts";
+import ws from "ws";
 
 import { db } from "~/server/db";
 
@@ -33,11 +42,6 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
-  return {
-    db,
-  };
-};
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -45,8 +49,26 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  const { req } = opts;
+  const sesh = getAuth(req);
+
+  const userId = sesh.userId;
+  const res = await fetch(
+    `https://api.clerk.com/v1/users/${userId}/oauth_access_tokens/oauth_spotify`,
+    {
+      mode: "no-cors",
+      headers: { Authorization: `Bearer ${env.CLERK_SECRET_KEY}` },
+    },
+  ).then((res) => res.json().then((res) => res[0].token));
+  const spotify = new SpotifyWebApi({ accessToken: res });
+  return {
+    db,
+    userId,
+    token: env.CLERK_SECRET_KEY,
+
+    spotify,
+  };
 };
 
 /**
@@ -93,3 +115,40 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+  }
+
+  return next({
+    ctx: {
+      userId: ctx.userId,
+      token: ctx.token,
+
+      spotify: ctx.spotify,
+    },
+  });
+});
+
+export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
+/* 
+export const createContext = async (
+  opts:
+    | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>
+    | CreateNextContextOptions,
+) => {
+ 
+  const { req } = opts;
+  const session = getAuth(req);
+  console.log('createContext for', session?.user?.emailAddresses ?? 'unknown user');
+
+  return {
+    session,
+  };
+}; 
+
+
+
+export type Context = inferAsyncReturnType<typeof createContext>;*/
