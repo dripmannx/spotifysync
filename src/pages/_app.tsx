@@ -5,7 +5,7 @@ import { ThemeProvider } from '~/components/ui/theme-provider';
 import '~/styles/globals.css';
 import { api } from '~/utils/api';
 import Layout from '../components/Layout/Layout';
-dayjs.locale('de');
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>

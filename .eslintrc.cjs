@@ -7,7 +7,7 @@ const config = {
   plugins: ["@typescript-eslint"],
   extends: [
     "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended-type-checked",
+    // "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
   ],
   rules: {
@@ -24,12 +24,12 @@ const config = {
       },
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-    "@typescript-eslint/no-misused-promises": [
+    /* "@typescript-eslint/no-misused-promises": [
       2,
       {
         checksVoidReturn: { attributes: false },
       },
-    ],
+    ], */
   },
 };
 

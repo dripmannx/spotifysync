@@ -1,24 +1,24 @@
+import { customAlphabet, nanoid } from "nanoid";
+import { number, string, z } from "zod";
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
-} from '~/server/api/trpc';
-import { customAlphabet, nanoid } from 'nanoid';
-import { number, string, z } from 'zod';
+} from "~/server/api/trpc";
 
-import { AwardIcon } from 'lucide-react';
-import { GetPlaylistItemsResponse } from 'spotify-web-api-ts/types/types/SpotifyResponses';
-import { PlaylistItem } from 'spotify-web-api-ts/types/types/SpotifyObjects';
-import { SpotifyWebApi } from 'spotify-web-api-ts';
-import { TRPCError } from '@trpc/server';
-import axios from 'axios';
-import { copyTracedFiles } from 'next/dist/build/utils';
-import dayjs from 'dayjs';
-import { privateDecrypt } from 'crypto';
-import superjson from 'superjson';
-import { useAuth } from '@clerk/nextjs';
-import { useImmer } from 'use-immer';
-import { useState } from 'react';
+import { useAuth } from "@clerk/nextjs";
+import { TRPCError } from "@trpc/server";
+import axios from "axios";
+import { privateDecrypt } from "crypto";
+import dayjs from "dayjs";
+import { AwardIcon } from "lucide-react";
+import { copyTracedFiles } from "next/dist/build/utils";
+import { useState } from "react";
+import { SpotifyWebApi } from "spotify-web-api-ts";
+import { PlaylistItem } from "spotify-web-api-ts/types/types/SpotifyObjects";
+import { type GetPlaylistItemsResponse } from "spotify-web-api-ts/types/types/SpotifyResponses";
+import superjson from "superjson";
+import { useImmer } from "use-immer";
 
 export const spotifyRouter = createTRPCRouter({
   getUsersPlaylist: privateProcedure.query(async ({ ctx, input }) => {
@@ -33,7 +33,7 @@ export const spotifyRouter = createTRPCRouter({
         id: string(),
         offset: z.number().optional(),
         limit: z.number().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const tracks: GetPlaylistItemsResponse =
@@ -52,7 +52,7 @@ export const spotifyRouter = createTRPCRouter({
         id2: string(),
         offset: z.number().optional(),
         limit: z.number().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       async function getAllTracksFromPlaylistWithOffset(id: string) {
@@ -62,13 +62,12 @@ export const spotifyRouter = createTRPCRouter({
 
         try {
           while (true) {
-            const response =
-              await ctx.spotify.playlists.getPlaylistItems(id, {
-                offset: offset,
-                limit: limit,
-              });
+            const response = await ctx.spotify.playlists.getPlaylistItems(id, {
+              offset: offset,
+              limit: limit,
+            });
             allTracks = allTracks.concat(
-              response.items.map((track) => track.track)
+              response.items.map((track) => track.track),
             );
 
             // If there are more tracks to fetch, increment the offset
@@ -80,22 +79,20 @@ export const spotifyRouter = createTRPCRouter({
             }
           }
         } catch (error) {
-          console.error('Error fetching playlist tracks:', error);
+          console.error("Error fetching playlist tracks:", error);
           return [];
         }
 
         return allTracks;
       }
 
-      const playlist1Tracks =
-        await getAllTracksFromPlaylistWithOffset(input.id1).then(
-          (tracks) => tracks
-        );
+      const playlist1Tracks = await getAllTracksFromPlaylistWithOffset(
+        input.id1,
+      ).then((tracks) => tracks);
 
-      const playlist2Tracks =
-        await getAllTracksFromPlaylistWithOffset(input.id2).then(
-          (tracks) => tracks
-        );
+      const playlist2Tracks = await getAllTracksFromPlaylistWithOffset(
+        input.id2,
+      ).then((tracks) => tracks);
 
       console.log(playlist1Tracks, playlist2Tracks);
       return { playlist1Tracks, playlist2Tracks };

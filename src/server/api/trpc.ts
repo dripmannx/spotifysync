@@ -54,6 +54,13 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const sesh = getAuth(req);
 
   const userId = sesh.userId;
+  /* const res = await fetch(
+    `https://api.clerk.com/v1/users/${userId}/oauth_access_tokens/oauth_spotify`,
+    {
+      mode: "no-cors",
+      headers: { Authorization: `Bearer ${env.CLERK_SECRET_KEY}` },
+    },
+  ).then((res) => res.json().then((res) => res[0].token)); */
   const res = await fetch(
     `https://api.clerk.com/v1/users/${userId}/oauth_access_tokens/oauth_spotify`,
     {
