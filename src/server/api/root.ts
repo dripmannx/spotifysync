@@ -1,5 +1,6 @@
-import { postRouter } from "~/server/api/routers/post";
-import { createTRPCRouter } from "~/server/api/trpc";
+import { createTRPCRouter } from '~/server/api/trpc';
+import { postRouter } from '~/server/api/routers/post';
+import { spotifyRouter } from './routers/spotify';
 
 /**
  * This is the primary router for your server.
@@ -7,7 +8,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
+  spotify: spotifyRouter,
 });
 
 // export type definition of API
