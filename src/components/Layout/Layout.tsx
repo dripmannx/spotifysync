@@ -1,6 +1,6 @@
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import React, { PropsWithChildren } from "react";
+import React, { type PropsWithChildren } from "react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,

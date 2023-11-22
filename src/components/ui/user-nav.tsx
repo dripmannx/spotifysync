@@ -1,14 +1,4 @@
-import {
-  ClerkProvider,
-  SignIn,
-  SignInButton,
-  SignOutButton,
-  SignedOut,
-  useUser,
-} from "@clerk/nextjs";
-import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Button } from "./button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,12 +9,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
+import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+
+import { Button } from "./button";
+import { useRouter } from "next/router";
 
 // Use the useUser hook to get the Clerk.user object
 
 export function UserNav() {
   const router = useRouter();
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isSignedIn, user } = useUser();
   if (isSignedIn && user)
     return (
       <DropdownMenu>
