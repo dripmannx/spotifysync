@@ -1,6 +1,5 @@
-import { createTRPCRouter } from '~/server/api/trpc';
-import { postRouter } from '~/server/api/routers/post';
-import { spotifyRouter } from './routers/spotify';
+import { createTRPCRouter } from "~/server/api/trpc";
+import { spotifyRouter } from "./routers/spotify";
 
 /**
  * This is the primary router for your server.
