@@ -1,20 +1,29 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Playlist {
+    playlistId String @id // Assuming this stores the playlist ID from Spotify
 
-    @@index([name])
+    syncs Sync[]
+}
+
+model Sync {
+    basePlaylistId    String // ID of the base playlist for comparison
+    comparePlaylistId String // ID of the playlist to compare
+    createdAt         DateTime @default(now())
+
+    basePlaylist Playlist @relation(fields: [basePlaylistId], references: [playlistId])
+
+    comparePlaylist String
+
+    @@id([basePlaylistId, comparePlaylistId])
+    @@index([basePlaylistId, comparePlaylistId])
 }
