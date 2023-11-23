@@ -1,29 +1,11 @@
-import { customAlphabet, nanoid } from "nanoid";
-import { number, string, z } from "zod";
-import {
-  createTRPCRouter,
-  privateProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { string, z } from "zod";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
-import { useAuth } from "@clerk/nextjs";
-import { TRPCError } from "@trpc/server";
-import axios from "axios";
-import { privateDecrypt } from "crypto";
-import dayjs from "dayjs";
-import { AwardIcon } from "lucide-react";
-import { copyTracedFiles } from "next/dist/build/utils";
-import { useState } from "react";
-import { SpotifyWebApi } from "spotify-web-api-ts";
-import { PlaylistItem } from "spotify-web-api-ts/types/types/SpotifyObjects";
 import { type GetPlaylistItemsResponse } from "spotify-web-api-ts/types/types/SpotifyResponses";
-import superjson from "superjson";
-import { useImmer } from "use-immer";
 
 export const spotifyRouter = createTRPCRouter({
   getUsersPlaylist: privateProcedure.query(async ({ ctx, input }) => {
     const playlists = await ctx.spotify.playlists.getMyPlaylists();
-    //const spotify_token = resp.map((item: any) => item.token)
 
     return { playlists };
   }),
@@ -41,7 +23,6 @@ export const spotifyRouter = createTRPCRouter({
           offset: input.offset,
           limit: input.limit,
         });
-      //const spotify_token = resp.map((item: any) => item.token)
 
       return { tracks };
     }),
@@ -96,5 +77,11 @@ export const spotifyRouter = createTRPCRouter({
 
       console.log(playlist1Tracks, playlist2Tracks);
       return { playlist1Tracks, playlist2Tracks };
+    }),
+  getPlaylist: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const playlist = await ctx.spotify.playlists.getPlaylist(input.id);
+      return { playlist };
     }),
 });

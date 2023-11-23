@@ -10,6 +10,7 @@ import {
 import Head from "next/head";
 import Image from "next/image";
 
+import { useRouter } from "next/router";
 import { type SimplifiedPlaylist } from "spotify-web-api-ts/types/types/SpotifyObjects";
 import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
@@ -34,6 +35,7 @@ export default function Home() {
   );
 }
 const PlaylistCard = ({ playlist }: { playlist: SimplifiedPlaylist }) => {
+  const router = useRouter();
   return (
     <Card>
       <CardHeader></CardHeader>
@@ -42,9 +44,14 @@ const PlaylistCard = ({ playlist }: { playlist: SimplifiedPlaylist }) => {
           <Image
             alt={playlist.images?.[0]?.url ?? ""}
             src={playlist.images?.[0]?.url ?? ""}
-            width={100}
-            height={100}
-            style={{ maxWidth: "100px", maxHeight: "auto" }}
+            layout="fixed"
+            width={50}
+            height={50}
+            style={{
+              width: "50px",
+              height: "auto",
+              backgroundSize: "cover",
+            }}
           />
           <div className="flex flex-col gap-2">
             <CardTitle>{playlist.name} </CardTitle>
@@ -53,7 +60,12 @@ const PlaylistCard = ({ playlist }: { playlist: SimplifiedPlaylist }) => {
         </div>
       </CardContent>
       <CardFooter className="  w-full ">
-        <Button className="mt-5 w-full ">Sync </Button>
+        <Button
+          className="mt-5 w-full "
+          onClick={() => router.push("playlist/" + playlist.id)}
+        >
+          Sync
+        </Button>
       </CardFooter>
     </Card>
   );
