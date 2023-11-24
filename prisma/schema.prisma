@@ -22,8 +22,6 @@ model Sync {
 
     basePlaylist Playlist @relation(fields: [basePlaylistId], references: [playlistId])
 
-    comparePlaylist String
-
     @@id([basePlaylistId, comparePlaylistId])
     @@index([basePlaylistId, comparePlaylistId])
 }
