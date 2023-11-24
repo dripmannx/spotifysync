@@ -18,7 +18,7 @@ export const syncRouter = createTRPCRouter({
     .input(
       z.object({ basePlaylistId: z.string(), comparePlaylistId: z.string() }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const existBasePlaylist = await ctx.db.playlist.findUnique({
         where: { playlistId: input.basePlaylistId },
       });
