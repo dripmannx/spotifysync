@@ -18,7 +18,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -157,9 +156,7 @@ export const AddSyncTask = ({ baseplaylistId }: { baseplaylistId: string }) => {
                   <FormControl>
                     <Input placeholder="Playlist ID" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is the description of your idea
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
